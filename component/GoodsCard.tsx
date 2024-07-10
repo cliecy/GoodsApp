@@ -9,69 +9,69 @@ import {
 import {Text, Card} from '@rneui/themed';
 import {GoodProps, ImageProps, ColumnProps} from './TypeDefinations.tsx';
 
+const splitDataIntoColumns = (data: GoodProps[]) => {
+  const leftColumn: GoodProps[] = [];
+  const rightColumn: GoodProps[] = [];
+
+  data.forEach((item, index) => {
+    if (index % 2 === 0) {
+      leftColumn.push(item);
+    } else {
+      rightColumn.push(item);
+    }
+  });
+
+  return {leftColumn, rightColumn};
+};
+
+const DynamicImage: React.FC<ImageProps> = ({uri}) => {
+  const [aspectRatio, setAspectRatio] = useState(1);
+
+  return (
+    <Card.Image
+      source={{uri}}
+      style={[styles.image, {aspectRatio}]}
+      resizeMode="cover"
+      onLoad={event => {
+        const {width, height} = event.nativeEvent.source;
+        setAspectRatio(width / height);
+      }}
+    />
+  );
+};
+
+const Column: React.FC<ColumnProps> = ({data}) => {
+  return (
+    <FlatList
+      data={data}
+      keyExtractor={item => item.id}
+      renderItem={({item}) => (
+        <View key={item.id} style={styles.cardContainer}>
+          <TouchableOpacity onPress={() => console.log('Press')}>
+            <Card containerStyle={styles.card}>
+              <DynamicImage uri={item.image} />
+              <Text style={styles.description} numberOfLines={3}>
+                {item.description}
+              </Text>
+              <Text style={styles.price}>¥ {item.price}</Text>
+              <View style={styles.user}>
+                <Image
+                  style={styles.avater}
+                  resizeMode="cover"
+                  source={{uri: item.user.avatar}}
+                />
+                <Text style={styles.name}>{item.user.name}</Text>
+              </View>
+            </Card>
+          </TouchableOpacity>
+        </View>
+      )}
+    />
+  );
+};
+
 const GoodsCard: React.FC<ColumnProps> = ({data}) => {
-  const splitDataIntoColumns = (data: GoodProps[]) => {
-    const leftColumn: GoodProps[] = [];
-    const rightColumn: GoodProps[] = [];
-
-    data.forEach((item, index) => {
-      if (index % 2 === 0) {
-        leftColumn.push(item);
-      } else {
-        rightColumn.push(item);
-      }
-    });
-
-    return {leftColumn, rightColumn};
-  };
-
   const {leftColumn, rightColumn} = splitDataIntoColumns(data);
-
-  const DynamicImage: React.FC<ImageProps> = ({uri}) => {
-    const [aspectRatio, setAspectRatio] = useState(1);
-
-    return (
-      <Card.Image
-        source={{uri}}
-        style={[styles.image, {aspectRatio}]}
-        resizeMode="cover"
-        onLoad={event => {
-          const {width, height} = event.nativeEvent.source;
-          setAspectRatio(width / height);
-        }}
-      />
-    );
-  };
-
-  const Column: React.FC<ColumnProps> = ({data}) => {
-    return (
-      <FlatList
-        data={data}
-        keyExtractor={item => item.id}
-        renderItem={({item}) => (
-          <View key={item.id} style={styles.cardContainer}>
-            <TouchableOpacity onPress={() => console.log('Press')}>
-              <Card containerStyle={styles.card}>
-                <DynamicImage uri={item.image} />
-                <Text style={styles.description} numberOfLines={3}>
-                  {item.description}
-                </Text>
-                <Text style={styles.price}>¥ {item.price}</Text>
-                <View style={styles.user}>
-                  <Image
-                    style={styles.avater}
-                    resizeMode="cover"
-                    source={{uri: item.user.avatar}}
-                  />
-                  <Text style={styles.name}>{item.user.name}</Text>
-                </View>
-              </Card>
-            </TouchableOpacity>
-          </View>
-        )}
-      />
-    );
-  };
   return (
     <FlatList
       data={[{key: 'columns'}]}
