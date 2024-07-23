@@ -1,28 +1,34 @@
-import * as React from 'react';
+import React from 'react';
 import {SearchBar} from '@rneui/base';
 
-export default () => {
+interface ISearchBarProps {
+  onSearch: (query: string) => void;
+}
+
+const ISearchBar: React.FC<ISearchBarProps> = ({onSearch}) => {
   const [value, setValue] = React.useState('');
+
+  const handleSearchChange = (newValue: string) => {
+    setValue(newValue);
+    onSearch(newValue);
+  };
+
   const onCancel = () => {
     setValue('');
-    return 'Canceled';
+    onSearch('');
   };
+
   return (
     <SearchBar
       platform="ios"
-      containerStyle={{}}
-      inputContainerStyle={{}}
-      inputStyle={{}}
-      leftIconContainerStyle={{}}
-      rightIconContainerStyle={{}}
-      loadingProps={{}}
-      onChangeText={newVal => setValue(newVal)}
+      value={value}
+      onChangeText={handleSearchChange}
+      onCancel={onCancel}
       placeholder="寻找你想要的..."
       placeholderTextColor="#888"
       cancelButtonTitle="取消"
-      cancelButtonProps={{}}
-      onCancel={() => console.log(onCancel())}
-      value={value}
     />
   );
 };
+
+export default ISearchBar;
